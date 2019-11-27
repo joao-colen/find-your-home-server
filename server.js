@@ -51,22 +51,25 @@ app.get('/rent/houses/:id', function (req, res) {
 })
 
 app.post('/rent/add', function (req, res) {
-  let query = "insert  into imovel(tipo, rua, numero, bairro, cidade, estado, pais, nquartos, nsuites, nsalas_estar, nvagas, area, armario_embutido, descricao) values ('apartamento', 'Avenida Cristal', 498, 'Jardim Riacho', 'Contagem', 'Minas Gerais', 'Brasil', 3, 4, 1, 2, 100, true, '');"
-  connection.query(query, function (error, results, fields) {
-    if (error) throw error;
-    res.send(results);
-  });
-  query2 = "insert into apartamento(id, nsalas_jantar, andar, valor_condominio, portaria_24h) values ((Select max(id) from imovel), 1, 1, 900, false);"
-  connection.query(query2, function (error, results, fields) {
-    if (error) throw error;
-    res.send(results);
-  });
-  query3 = "insert  into aluguel(id_imovel, valor_aluguel, data) values ((Select max(id) from imovel),1000,'2019-10-22');"
-  connection.query(query3, function (error, results, fields) {
-    if (error) throw error;
-    res.send(results);
-  });
+  console.log(res.body);
+  //let query = "insert  into imovel(tipo, rua, numero, bairro, cidade, estado, pais, nquartos, nsuites, nsalas_estar, nvagas, area, armario_embutido) values (" + req.tipo + "," +  req.rua + "," + req.numero + "," + req. bairro;
+  //query += ","+ req.cidade + "," + req.estado + "," + req.pais + "," + req.nquartos + "," + req.nsuites + "," + req.nsalas_estar + "," + req.nvagas + "," + req.area + "," +  req.armario_embutido + ");";
+  //connection.query(query, function (error, results, fields) {
+    //if (error) throw error;
+    //res.send(results);
+  //});
+  //if(req.tipo == 'apartamento') {
+    //query2 = "insert into apartamento(id, nsalas_jantar, andar, valor_condominio, portaria_24h) values ((Select max(id) from imovel)," + req.nsalas_jantar + "," + req.andar + "," + req.valor_condominio + "," + req.portaria_24h +");";
+    //connection.query(query2, function (error, results, fields) {
+      //if (error) throw error;
+      //res.send(results);
+    //});
+  //}
+  //query3 = "insert  into aluguel(id_imovel, valor_aluguel, data, descricao) values ((Select max(id) from imovel)," + req.valor_aluguel + "," + req.data + "," + req.descricao + " );"
+  //connection.query(query3, function (error, results, fields) {
+    //if (error) throw error;
+    //res.send(results);
+  //});
 })
-
 app.listen(3000)
 
