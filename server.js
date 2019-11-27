@@ -25,39 +25,47 @@ app.use(function(req, res, next) {
   next();
 });
 
+// show all homes
 app.get('/homes', function (req, res) {
-  connection.query('SELECT I.ID, I.tipo, I.rua, I.numero, I.bairro, I.cidade, I.estado, I.pais, I.nquartos, I.nsuites, I.nsalas_estar, I.nvagas, I.area, I.armario_embutido, I.descricao, A.nsalas_jantar, A.andar, A.valor_condominio, A.portaria_24h FROM imovel AS I LEFT OUTER JOIN apartamento AS A ON I.ID = A.ID ', function (error, results, fields) {
+  connection.query('SELECT * from apartamento NATURAL RIGHT JOIN imovel' , function (error, results, fields) {
     if (error) throw error;
-    console.log(results[2]);
     res.send(results);
   });
 })
 
+// show all homes with rent information
 app.get('/rent', function (req, res) {
-  connection.query('SELECT I.ID, I.tipo, I.rua, I.numero, I.bairro, I.cidade, I.estado, I.pais, I.nquartos, I.nsuites, I.nsalas_estar, I.nvagas, I.area, I.armario_embutido, I.descricao,  A.valor_aluguel, A.data FROM imovel AS I LEFT OUTER JOIN aluguel AS A ON I.ID = A.id_imovel', function (error, results, fields) {
+  connection.query('SELECT * from aluguel NATURAL JOIN imovel NATURAL LEFT JOIN apartamento', function (error, results, fields) {
     if (error) throw error;
-    console.log(results[2]);
     res.send(results);
   });
 })
 
+// show especific home for rent
 app.get('/rent/houses/:id', function (req, res) {
   const id = req.params.id;
-  connection.query('SELECT * FROM imovel NATURAL LEFT OUTER JOIN apartamento NATURAL LEFT OUTER JOIN aluguel WHERE  imovel.ID = ' + id, function (error, results, fields) {
+  connection.query('SELECT * from aluguel NATURAL JOIN imovel NATURAL LEFT JOIN apartamento WHERE  imovel.ID = ' + id, function (error, results, fields) {
     if (error) throw error;
     res.send(results);
   });
 })
 
-app.post('/rent/add', jsonParser, function (req, res) {
-  const data = req.body;
-  connection.query('SELECT * FROM imovel AS C, casa F C.ID = F.ID', function (error, results, fields) {
+app.post('/rent/add', function (req, res) {
+  let query = "insert  into imovel(tipo, rua, numero, bairro, cidade, estado, pais, nquartos, nsuites, nsalas_estar, nvagas, area, armario_embutido, descricao) values ('apartamento', 'Avenida Cristal', 498, 'Jardim Riacho', 'Contagem', 'Minas Gerais', 'Brasil', 3, 4, 1, 2, 100, true, '');"
+  connection.query(query, function (error, results, fields) {
     if (error) throw error;
     res.send(results);
-    console.log('Apartamento 1: ', results[0]);
   });
-
-  connection.end();
+  query2 = "insert into apartamento(id, nsalas_jantar, andar, valor_condominio, portaria_24h) values ((Select max(id) from imovel), 1, 1, 900, false);"
+  connection.query(query2, function (error, results, fields) {
+    if (error) throw error;
+    res.send(results);
+  });
+  query3 = "insert  into aluguel(id_imovel, valor_aluguel, data) values ((Select max(id) from imovel),1000,'2019-10-22');"
+  connection.query(query3, function (error, results, fields) {
+    if (error) throw error;
+    res.send(results);
+  });
 })
 
 app.listen(3000)
